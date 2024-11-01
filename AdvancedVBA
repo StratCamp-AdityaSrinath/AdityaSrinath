@@ -1,0 +1,55 @@
+new file
+Private Sub Workbook_Open()
+    MsgBox "Welcome!"
+End Sub
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    Dim ans As Integer
+    ans = MsgBox("Are you sure?", vbYesNo)
+    If ans = vbNo Then Cancel = True
+End Sub
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    Dim Target As Range
+    Dim cell As Range
+    Dim isEmpty As Boolean
+    
+    Set Target = ThisWorkbook.Sheets("Sheet1").Range("E2:E5")
+    
+    isEmpty = False
+    
+    For Each cell In Target
+        If Trim(cell.Value) = "" Then
+            isEmpty = True
+            Exit For
+        End If
+    Next cell
+    
+    If isEmpty Then
+        Cancel = True
+        MsgBox ("Please ensure all trading data is filled in!")
+    End If
+End Sub
+
+rivate Sub Worksheet_Change(ByVal Target As Range)
+    Dim date_of_change As Date
+    If Not Intersect(Target, Me.Columns("A")) Is Nothing Then
+        date_of_change = Now
+        Range("Date_At_Last_Change").Value = date_of_change
+    End If
+End Sub
+Sub createdropdown()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    
+    If Not ws.Range("E2").Validation.Type = xlValidateList Then
+        ws.Range("E2").Validation.Delete
+        ws.Range("E2").Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="Stock,Bond,Option,Swap,Future,Commodity"
+        MsgBox "Dropdown added to E2."
+    Else
+        If ws.Range("E2").Validation.Formula1 <> "Stock,Bond,Option,Swap,Future,Commodity" Then
+            ws.Range("E2").Validation.Delete
+        ws.Range("E2").Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="Stock,Bond,Option,Swap,Future,Commodity"
+        MsgBox "Dropdown updated at E2."
+        Else
+        End If
+    End If
+End Sub
